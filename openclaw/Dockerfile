@@ -25,14 +25,33 @@ FROM ${OPENCLAW_BASE_IMAGE}
 
 USER root
 
-# Install Playwright Chromium OS-level system dependencies ONLY.
-# The browser binary is intentionally NOT baked here — it is installed into
-# the named volume by the playwright-init service on every container start.
-# `playwright install chromium` is version-aware and idempotent: it skips if
-# the correct version is already present, and installs the new version when
-# the image is upgraded (playwright-core version changes).
-RUN node /app/node_modules/playwright-core/cli.js install-deps chromium \
+# 1. Playwright system deps + Homebrew prerequisites (gcc, make, etc.)
+RUN apt-get update \
+ && node /app/node_modules/playwright-core/cli.js install-deps chromium \
+ && apt-get install -y --no-install-recommends \
+        build-essential \
+        procps \
+        file \
+        git \
+        curl \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
 
+# 2. Install Homebrew into /home/node/homebrew.
+#    • Uses the alternative "git clone" method instead of the official install
+#      script, because the script refuses to install to a custom prefix for
+#      non-root users (it only supports /home/linuxbrew/.linuxbrew by default).
+#    • Runs as 'node' — files are owned correctly from the start.
+#    • /home/node is backed by the named volume, so brew itself and every
+#      package installed afterwards persist across container recreations and
+#      image upgrades (upgrade image → keep volume → keep installed tools).
+#    • The three ENV vars tell brew where it lives; PATH is updated so that
+#      subsequent RUN steps and the running container can call `brew` directly.
 USER node
+ENV HOMEBREW_PREFIX=/home/node/homebrew \
+    HOMEBREW_CELLAR=/home/node/homebrew/Cellar \
+    HOMEBREW_REPOSITORY=/home/node/homebrew
+ENV PATH="${HOMEBREW_PREFIX}/bin:${HOMEBREW_PREFIX}/sbin:${PATH}"
+
+RUN git clone --depth=1 https://github.com/Homebrew/brew.git "${HOMEBREW_PREFIX}" \
+ && "${HOMEBREW_PREFIX}/bin/brew" update --force --quiet
