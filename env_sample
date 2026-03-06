@@ -1,0 +1,39 @@
+# 镜像配置
+OPENCLAW_IMAGE=openclaw-hf:local
+OPENCLAW_BASE_IMAGE=ghcr.io/openclaw/openclaw:latest
+#OPENCLAW_BASE_IMAGE=ghcr.io/openclaw/openclaw:2026.3.2
+
+# Volume
+OPENCLAW_HOME_VOLUME=openclaw_home
+
+# 网关配置
+OPENCLAW_GATEWAY_PORT=18789
+OPENCLAW_BRIDGE_PORT=18790
+OPENCLAW_GATEWAY_BIND=lan
+OPENCLAW_GATEWAY_TOKEN=claw
+
+# Claude 集成（可选，仅使用 Claude 作为后端时填写）
+CLAUDE_AI_SESSION_KEY=
+CLAUDE_WEB_SESSION_KEY=
+CLAUDE_WEB_COOKIE=
+
+# Proxy
+HTTP_PROXY=
+HTTPS_PROXY=
+NO_PROXY=localhost,127.0.0.1
+
+# browser
+PLAYWRIGHT_BROWSERS_PATH=/home/node/.cache/ms-playwright
+
+# ── Star Office UI ────────────────────────────────────────────────────────────
+STAR_OFFICE_PORT=18791
+STAR_OFFICE_DATA_VOLUME=star_office_data
+
+# REQUIRED in production: set strong random values
+FLASK_SECRET_KEY=replace_with_a_long_random_secret
+ASSET_DRAWER_PASS=replace_with_strong_drawer_password
+
+# Optional Gemini integration (AI background generation)
+GEMINI_API_KEY=
+GEMINI_MODEL=nanobanana-pro
+STAR_OFFICE_ENV=production
