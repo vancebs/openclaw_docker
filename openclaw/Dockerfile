@@ -23,6 +23,14 @@
 ARG OPENCLAW_BASE_IMAGE=ghcr.io/openclaw/openclaw:latest
 FROM ${OPENCLAW_BASE_IMAGE}
 
+# setup proxy
+ARG HTTP_PROXY
+ARG HTTPS_PROXY
+ARG NO_PROXY
+ENV HTTP_PROXY=${HTTP_PROYX:-}
+ENV HTTPS_PROXY=${HTTPS_PROYX:-}
+ENV NO_PROXY=${NO_PROXY:-}
+
 USER root
 
 # 1. Playwright system deps + Homebrew prerequisites (gcc, make, etc.)

@@ -1,5 +1,13 @@
 FROM python:3.12-slim
 
+# setup proxy
+ARG HTTP_PROXY
+ARG HTTPS_PROXY
+ARG NO_PROXY
+ENV HTTP_PROXY=${HTTP_PROYX:-}
+ENV HTTPS_PROXY=${HTTPS_PROYX:-}
+ENV NO_PROXY=${NO_PROXY:-}
+
 # Install git and curl (git for clone, curl for healthcheck)
 RUN apt-get update && apt-get install -y --no-install-recommends \
         git \
