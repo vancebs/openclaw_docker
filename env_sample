@@ -20,7 +20,7 @@ CLAUDE_WEB_COOKIE=
 # Proxy
 HTTP_PROXY=
 HTTPS_PROXY=
-NO_PROXY=localhost,127.0.0.1,openclaw-gateway
+NO_PROXY=localhost,127.0.0.1
 
 # browser
 PLAYWRIGHT_BROWSERS_PATH=/home/node/.cache/ms-playwright

@@ -113,7 +113,7 @@ services:
       CLAUDE_WEB_COOKIE: ${CLAUDE_WEB_COOKIE:-}
       HTTP_PROXY: ${HTTP_PROXY:-}
       HTTPS_PROXY: ${HTTPS_PROXY:-}
-      NO_PROXY: ${NO_PROXY:-localhost,127.0.0.1,openclaw-gateway}
+      NO_PROXY: ${NO_PROXY:-localhost,127.0.0.1},openclaw-gateway
       PLAYWRIGHT_BROWSERS_PATH: ${PLAYWRIGHT_BROWSERS_PATH:-/home/node/.cache/ms-playwright}
     volumes:
       - openclaw_home:/home/node
