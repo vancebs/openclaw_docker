@@ -30,8 +30,8 @@ STAR_OFFICE_PORT=18791
 STAR_OFFICE_DATA_VOLUME=star_office_data
 
 # REQUIRED in production: set strong random values
-FLASK_SECRET_KEY=replace_with_a_long_random_secret
-ASSET_DRAWER_PASS=replace_with_strong_drawer_password
+FLASK_SECRET_KEY=replace_with_password_longer_than_24 # length >= 24
+ASSET_DRAWER_PASS=replace_with_password_longer_than_8 # length >= 8
 
 # Optional Gemini integration (AI background generation)
 GEMINI_API_KEY=
