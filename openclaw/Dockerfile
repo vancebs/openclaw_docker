@@ -63,3 +63,9 @@ ENV PATH="${HOMEBREW_PREFIX}/bin:${HOMEBREW_PREFIX}/sbin:${PATH}"
 
 RUN git clone --depth=1 https://github.com/Homebrew/brew.git "${HOMEBREW_PREFIX}" \
  && "${HOMEBREW_PREFIX}/bin/brew" update --force --quiet
+
+# pnpm setup
+ENV PNPM_HOME="/home/node/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+
+RUN corepack enable
