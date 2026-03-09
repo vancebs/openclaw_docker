@@ -19,20 +19,29 @@ fi
 # need for the manual `docker build` call below.
 set -a; source .env; set +a
 
-# --install / -i : build the local image and run the onboarding wizard
+# check for install
+INSTALL=0
 if [[ "${1:-}" == "--install" || "${1:-}" == "-i" ]]; then
+    INSTALL=1
+fi
+
+if [[ $INSTALL -eq 1 ]]; then
     echo "==> Building images ..."
     docker compose build --pull
-
-    echo "==> Start openclaw-gateway ..."
-    docker compose up -d openclaw-gateway
-    until docker compose ps openclaw-gateway | grep -q "Up"; do
-        sleep 1
-    done
-
-    echo "==> Running onboarding wizard ..."
-    docker compose run --rm openclaw-cli onboard
 fi
 
 echo "==> Starting services ..."
-docker compose up -d openclaw-gateway star-office-ui
+docker compose up -d
+
+echo "==> Wait for openclaw-gateway ready..."
+until docker compose ps openclaw-gateway | grep -q "Up"; do
+    sleep 1
+done
+
+echo "==> Updating playwright"
+docker compose exec openclaw-gateway node /app/node_modules/playwright-core/cli.js install chromium
+
+if [[ $INSTALL -eq 1 ]]; then
+    echo "==> Running onboarding wizard ..."
+    docker compose exec openclaw-gateway openclaw onboard
+fi

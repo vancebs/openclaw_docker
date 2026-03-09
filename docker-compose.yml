@@ -10,34 +10,6 @@ volumes:
     name: ${STAR_OFFICE_DATA_VOLUME:-star_office_data}
 
 services:
-  # ── One-shot Playwright browser installer ──────────────────────────────────
-  # Runs before the gateway. `playwright install chromium` is idempotent:
-  # skips if the correct version is already in the volume, installs (or
-  # upgrades) otherwise.  This ensures the browser version always matches
-  # the playwright-core bundled in the current image.
-  playwright-init:
-    image: ${OPENCLAW_IMAGE:-openclaw:local}
-    user: "node"
-    environment:
-      HOME: /home/node
-      PLAYWRIGHT_BROWSERS_PATH: ${PLAYWRIGHT_BROWSERS_PATH:-/home/node/.cache/ms-playwright}
-      HTTP_PROXY: ${HTTP_PROXY:-}
-      HTTPS_PROXY: ${HTTPS_PROXY:-}
-      NO_PROXY: ${NO_PROXY:-localhost,127.0.0.1}
-    volumes:
-      - openclaw_home:/home/node
-      #- ${OPENCLAW_CONFIG_DIR}:/home/node/.openclaw
-      #- ${OPENCLAW_WORKSPACE_DIR}:/home/node/.openclaw/workspace
-    restart: "no"
-    command:
-      - sh
-      - -c
-      - |
-        echo "[playwright-init] Ensuring Playwright Chromium is up-to-date..."
-        PLAYWRIGHT_BROWSERS_PATH="${PLAYWRIGHT_BROWSERS_PATH:-/home/node/.cache/ms-playwright}" \
-          node /app/node_modules/playwright-core/cli.js install chromium
-        echo "[playwright-init] Done."
-
   openclaw-gateway:
     image: ${OPENCLAW_IMAGE:-openclaw:local}
     build:
@@ -58,6 +30,9 @@ services:
       HTTP_PROXY: ${HTTP_PROXY:-}
       HTTPS_PROXY: ${HTTPS_PROXY:-}
       NO_PROXY: ${NO_PROXY:-localhost,127.0.0.1}
+      http_proxy: ${HTTP_PROXY:-}
+      https_proxy: ${HTTPS_PROXY:-}
+      no_proxy: ${NO_PROXY:-localhost,127.0.0.1}
       PLAYWRIGHT_BROWSERS_PATH: ${PLAYWRIGHT_BROWSERS_PATH:-/home/node/.cache/ms-playwright}
     volumes:
       - openclaw_home:/home/node
@@ -70,9 +45,6 @@ services:
       - "${OPENCLAW_BRIDGE_PORT:-18790}:18790"
     init: true
     restart: unless-stopped
-    depends_on:
-      playwright-init:
-        condition: service_completed_successfully
     command:
       [
         "node",
@@ -95,37 +67,6 @@ services:
       timeout: 5s
       retries: 5
       start_period: 20s
-
-  openclaw-cli:
-    image: ${OPENCLAW_IMAGE:-openclaw:local}
-    cap_drop:
-      - NET_RAW
-      - NET_ADMIN
-    network_mode: service:openclaw-gateway
-    security_opt:
-      - no-new-privileges:true
-    environment:
-      HOME: /home/node
-      TERM: xterm-256color
-      OPENCLAW_GATEWAY_TOKEN: ${OPENCLAW_GATEWAY_TOKEN}
-      BROWSER: echo
-      CLAUDE_AI_SESSION_KEY: ${CLAUDE_AI_SESSION_KEY:-}
-      CLAUDE_WEB_SESSION_KEY: ${CLAUDE_WEB_SESSION_KEY:-}
-      CLAUDE_WEB_COOKIE: ${CLAUDE_WEB_COOKIE:-}
-      HTTP_PROXY: ${HTTP_PROXY:-}
-      HTTPS_PROXY: ${HTTPS_PROXY:-}
-      NO_PROXY: ${NO_PROXY:-localhost,127.0.0.1},openclaw-gateway
-      PLAYWRIGHT_BROWSERS_PATH: ${PLAYWRIGHT_BROWSERS_PATH:-/home/node/.cache/ms-playwright}
-    volumes:
-      - openclaw_home:/home/node
-      #- ${OPENCLAW_CONFIG_DIR}:/home/node/.openclaw
-      #- ${OPENCLAW_WORKSPACE_DIR}:/home/node/.openclaw/workspace
-    stdin_open: true
-    tty: true
-    init: true
-    entrypoint: ["node", "dist/index.js"]
-    depends_on:
-      - openclaw-gateway
 
   # ── Star Office UI ──────────────────────────────────────────────────────────
   # Pixel-art AI agent status dashboard.
@@ -157,8 +98,9 @@ services:
       - "${STAR_OFFICE_PORT:-18791}:18791"
     restart: unless-stopped
     depends_on:
-      openclaw-gateway:
-        condition: service_healthy
+      - openclaw-gateway
+      #openclaw-gateway:
+      #  condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-fsS", "http://127.0.0.1:18791/health"]
       interval: 30s
