@@ -47,6 +47,9 @@ RUN apt-get update \
         curl \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
+RUN mkdir -p /home/linuxbrew \
+ && chmod 755 /home/linuxbrew \
+ && ln -s /home/node/.linuxbrew /home/linuxbrew/.linuxbrew
 
 # 2. Install Homebrew into /home/node/homebrew.
 #    • Uses the alternative "git clone" method instead of the official install
@@ -61,12 +64,12 @@ RUN apt-get update \
 USER node
 WORKDIR /home/node
 
-ENV HOMEBREW_PREFIX=/home/node/.linuxbrew
+ENV HOMEBREW_PREFIX=/home/linuxbrew/.linuxbrew
 ENV HOMEBREW_CELLAR=${HOMEBREW_PREFIX}/Cellar
 ENV HOMEBREW_REPOSITORY=${HOMEBREW_PREFIX}
 ENV PATH="${HOMEBREW_PREFIX}/bin:${HOMEBREW_PREFIX}/sbin:${PATH}"
 
-RUN git clone --depth=1 https://github.com/Homebrew/brew.git "${HOMEBREW_PREFIX}" \
+RUN git clone --depth=1 https://github.com/Homebrew/brew.git "/home/node/.linuxbrew" \
  && "${HOMEBREW_PREFIX}/bin/brew" update --force --quiet
 
 # pnpm setup
