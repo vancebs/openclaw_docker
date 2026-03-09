@@ -31,6 +31,9 @@ ENV HTTP_PROXY=${HTTP_PROYX:-}
 ENV HTTPS_PROXY=${HTTPS_PROYX:-}
 ENV NO_PROXY=${NO_PROXY:-}
 
+# setup PLAYWRIGHT_BROWSERS_PATH
+ENV PLAYWRIGHT_BROWSERS_PATH=/home/node/.cache/ms-playwright
+
 USER root
 
 # 1. Playwright system deps + Homebrew prerequisites (gcc, make, etc.)
@@ -56,9 +59,11 @@ RUN apt-get update \
 #    • The three ENV vars tell brew where it lives; PATH is updated so that
 #      subsequent RUN steps and the running container can call `brew` directly.
 USER node
-ENV HOMEBREW_PREFIX=/home/node/homebrew \
-    HOMEBREW_CELLAR=/home/node/homebrew/Cellar \
-    HOMEBREW_REPOSITORY=/home/node/homebrew
+WORKDIR /home/node
+
+ENV HOMEBREW_PREFIX=/home/node/.linuxbrew
+ENV HOMEBREW_CELLAR=${HOMEBREW_PREFIX}/Cellar
+ENV HOMEBREW_REPOSITORY=${HOMEBREW_PREFIX}
 ENV PATH="${HOMEBREW_PREFIX}/bin:${HOMEBREW_PREFIX}/sbin:${PATH}"
 
 RUN git clone --depth=1 https://github.com/Homebrew/brew.git "${HOMEBREW_PREFIX}" \
@@ -69,3 +74,6 @@ ENV PNPM_HOME="/home/node/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 
 RUN corepack enable
+
+# switch to /app to follow original behavior
+WORKDIR /app

@@ -11,7 +11,6 @@ OPENCLAW_GATEWAY_PORT=18789
 OPENCLAW_BRIDGE_PORT=18790
 OPENCLAW_GATEWAY_BIND=lan
 OPENCLAW_GATEWAY_TOKEN=claw
-OPENCLAW_ALLOW_INSECURE_PRIVATE_WS="1"
 
 # Claude 集成（可选，仅使用 Claude 作为后端时填写）
 CLAUDE_AI_SESSION_KEY=
@@ -22,9 +21,6 @@ CLAUDE_WEB_COOKIE=
 HTTP_PROXY=
 HTTPS_PROXY=
 NO_PROXY=localhost,127.0.0.1
-
-# browser
-PLAYWRIGHT_BROWSERS_PATH=/home/node/.cache/ms-playwright
 
 # ── Star Office UI ────────────────────────────────────────────────────────────
 STAR_OFFICE_PORT=18791

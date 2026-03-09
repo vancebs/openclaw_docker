@@ -20,28 +20,27 @@ fi
 set -a; source .env; set +a
 
 # check for install
-INSTALL=0
 if [[ "${1:-}" == "--install" || "${1:-}" == "-i" ]]; then
-    INSTALL=1
-fi
-
-if [[ $INSTALL -eq 1 ]]; then
     echo "==> Building images ..."
     docker compose build --pull
+
+    echo "==> onboard ..."
+    docker compose run --rm openclaw-gateway \
+        node dist/index.js onboard
+
+    echo "==> Configure mode & bind"
+    docker compose run --rm openclaw-gateway \
+        node dist/index.js config set gateway.mode local
+    docker compose run --rm openclaw-gateway \
+        node dist/index.js config set gateway.bind lan
+
+    echo "==> Configure allowedOrigins ..."
+    docker compose run --rm openclaw-gateway \
+        node dist/index.js config set gateway.controlUi.allowedOrigins \
+        "$(printf '["http://127.0.0.1:%s"]' "$OPENCLAW_GATEWAY_PORT")" \
+        --strict-json
 fi
 
 echo "==> Starting services ..."
 docker compose up -d
 
-echo "==> Wait for openclaw-gateway ready..."
-until docker compose ps openclaw-gateway | grep -q "Up"; do
-    sleep 1
-done
-
-echo "==> Updating playwright"
-docker compose exec openclaw-gateway node /app/node_modules/playwright-core/cli.js install chromium
-
-if [[ $INSTALL -eq 1 ]]; then
-    echo "==> Running onboarding wizard ..."
-    docker compose exec openclaw-gateway openclaw onboard
-fi
