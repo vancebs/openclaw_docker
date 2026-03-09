@@ -24,9 +24,13 @@ if [[ "${1:-}" == "--install" || "${1:-}" == "-i" ]]; then
     echo "==> Building images ..."
     docker compose build --pull
 
+    echo "==> Start openclaw-gateway ..."
+    docker compose up -d openclaw-gateway
+    until docker compose ps openclaw-gateway | grep -q "Up"; do
+        sleep 1
+    done
+
     echo "==> Running onboarding wizard ..."
-    # depends_on: condition: service_healthy ensures gateway is ready before
-    # the CLI starts, so proxy env vars and OPENCLAW_GATEWAY_URL are effective.
     docker compose run --rm openclaw-cli onboard
 fi
 
