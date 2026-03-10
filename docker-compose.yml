@@ -64,6 +64,7 @@ services:
       retries: 5
       start_period: 20s
 
+
   # ── Star Office UI ──────────────────────────────────────────────────────────
   # Pixel-art AI agent status dashboard.
   # Mounts star_office_data for runtime state persistence and openclaw_home

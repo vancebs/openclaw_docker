@@ -28,16 +28,23 @@ if [[ "${1:-}" == "--install" || "${1:-}" == "-i" ]]; then
     docker compose run --rm openclaw-gateway \
         node dist/index.js onboard
 
-    echo "==> Configure mode & bind"
+    echo "==> Configure mode ..."
     docker compose run --rm openclaw-gateway \
         node dist/index.js config set gateway.mode local
-    docker compose run --rm openclaw-gateway \
-        node dist/index.js config set gateway.bind lan
+
+    #echo "==> Configure bind ..." # already configured by OPENCLAW_GATEWAY_BIND within .env
+    #docker compose run --rm openclaw-gateway \
+    #    node dist/index.js config set gateway.bind lan
 
     echo "==> Configure allowedOrigins ..."
+    URLS=""
+    if [ "${OPENCLAW_GATEWAY_ALLOWED_IP:-}" != "" ]; then
+        URLS="$(printf ,\"https://%s\" ${OPENCLAW_GATEWAY_ALLOWED_IP})"
+    fi
+    URLS="[\"http://127.0.0.1:${OPENCLAW_GATEWAY_PORT}\",\"http://localhost:${OPENCLAW_GATEWAY_PORT}\"${URLS}]"
     docker compose run --rm openclaw-gateway \
         node dist/index.js config set gateway.controlUi.allowedOrigins \
-        "$(printf '["http://127.0.0.1:%s"]' "$OPENCLAW_GATEWAY_PORT")" \
+        "${URLS}" \
         --strict-json
 fi
 
