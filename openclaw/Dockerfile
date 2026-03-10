@@ -45,6 +45,7 @@ RUN apt-get update \
         file \
         git \
         curl \
+        vim \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
 RUN mkdir -p /home/linuxbrew \
