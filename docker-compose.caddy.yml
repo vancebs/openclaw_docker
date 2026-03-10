@@ -1,0 +1,21 @@
+volumes:
+  caddy_data:
+    name: openclaw_caddy_data
+  caddy_config:
+    name: openclaw_caddy_config
+
+services:
+  openclaw-caddy:
+    image: caddy:latest
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - $PWD/caddy_conf:/etc/caddy
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - openclaw-gateway

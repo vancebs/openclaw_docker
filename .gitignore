@@ -112,3 +112,5 @@ venv.bak/
 /dist
 /port_trace
 /cache
+
+/caddy_conf

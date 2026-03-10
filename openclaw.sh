@@ -1,3 +1,5 @@
 #! /bin/bash
 
-docker compose exec openclaw-gateway openclaw $@
+source utils.sh
+
+docker_compose exec openclaw-gateway openclaw $@

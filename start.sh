@@ -1,6 +1,8 @@
 #! /bin/bash
 set -euo pipefail
 
+source utils.sh
+
 # ── .env bootstrap ────────────────────────────────────────────────────────────
 if [ ! -f .env ]; then
     cp env_sample .env
@@ -15,25 +17,41 @@ if [ ! -f .env ]; then
     echo ""
 fi
 
-# docker compose auto-reads .env; source it here only to get the vars we
-# need for the manual `docker build` call below.
-set -a; source .env; set +a
-
 # check for install
 if [[ "${1:-}" == "--install" || "${1:-}" == "-i" ]]; then
+    if [ ${ENABLE_CADDY:-0} -eq 1 ]; then
+        echo "==> Prepare Caddyfile ..."
+        CADDY_CONF_DIR="$PWD/caddy_conf"
+        CADDY_FILE="$CADDY_CONF_DIR/Caddyfile"
+        mkdir -p "${CADDY_CONF_DIR}"
+        if [ "${OPENCLAW_GATEWAY_ALLOWED_IP:-}" != "" ]; then
+            echo "  --> Generating Caddyfile ..."
+            CADDY_URLS="$(printf ", %s" ${OPENCLAW_GATEWAY_ALLOWED_IP})"
+            echo "{" > "${CADDY_FILE}"
+	    echo "	default_sni 127.0.0.1"  >> "${CADDY_FILE}"
+	    echo "}" >> "${CADDY_FILE}"
+            echo "127.0.0.1${CADDY_URLS} {" >> "${CADDY_FILE}"
+            echo "	tls internal" >> "${CADDY_FILE}"
+            echo "	reverse_proxy openclaw-gateway:${OPENCLAW_GATEWAY_PORT}" >> "${CADDY_FILE}"
+            echo "}" >> "${CADDY_FILE}"
+        else
+            echo "  --> Skip Caddyfile due to OPENCLAW_GATEWAY_ALLOWED_IP not set or empty ..."
+        fi
+    fi
+
     echo "==> Building images ..."
-    docker compose build --pull
+    docker_compose build --pull
 
     echo "==> onboard ..."
-    docker compose run --rm openclaw-gateway \
+    docker_compose run --rm openclaw-gateway \
         node dist/index.js onboard
 
     echo "==> Configure mode ..."
-    docker compose run --rm openclaw-gateway \
+    docker_compose run --rm openclaw-gateway \
         node dist/index.js config set gateway.mode local
 
     #echo "==> Configure bind ..." # already configured by OPENCLAW_GATEWAY_BIND within .env
-    #docker compose run --rm openclaw-gateway \
+    #docker_compose run --rm openclaw-gateway \
     #    node dist/index.js config set gateway.bind lan
 
     echo "==> Configure allowedOrigins ..."
@@ -42,12 +60,12 @@ if [[ "${1:-}" == "--install" || "${1:-}" == "-i" ]]; then
         URLS="$(printf ,\"https://%s\" ${OPENCLAW_GATEWAY_ALLOWED_IP})"
     fi
     URLS="[\"http://127.0.0.1:${OPENCLAW_GATEWAY_PORT}\",\"http://localhost:${OPENCLAW_GATEWAY_PORT}\"${URLS}]"
-    docker compose run --rm openclaw-gateway \
+    docker_compose run --rm openclaw-gateway \
         node dist/index.js config set gateway.controlUi.allowedOrigins \
         "${URLS}" \
         --strict-json
 fi
 
 echo "==> Starting services ..."
-docker compose up -d
+docker_compose up -d
 

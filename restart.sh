@@ -2,4 +2,4 @@
 
 source utils.sh
 
-docker_compose down
+docker_compose restart

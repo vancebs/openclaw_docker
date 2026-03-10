@@ -1,7 +1,7 @@
 # 镜像配置
 OPENCLAW_IMAGE=openclaw-hf:local
-OPENCLAW_BASE_IMAGE=ghcr.io/openclaw/openclaw:latest
-#OPENCLAW_BASE_IMAGE=ghcr.io/openclaw/openclaw:2026.3.2
+#OPENCLAW_BASE_IMAGE=ghcr.io/openclaw/openclaw:latest
+OPENCLAW_BASE_IMAGE=ghcr.io/openclaw/openclaw:2026.3.2
 
 # Volume
 OPENCLAW_HOME_VOLUME=openclaw_home
@@ -11,7 +11,7 @@ OPENCLAW_GATEWAY_PORT=18789
 OPENCLAW_BRIDGE_PORT=18790
 OPENCLAW_GATEWAY_BIND=lan
 OPENCLAW_GATEWAY_TOKEN=claw
-#OPENCLAW_GATEWAY_ALLOWED_IP="192.168.3.200 192.168.10.200" # allowed non-local IPs
+#OPENCLAW_GATEWAY_ALLOWED_IP="192.168.3.200 192.168.10.200" # localhost和127.0.0.1以外需要访问控制后台的IP。配置后将以https://<ip>访问
 
 # Claude 集成（可选，仅使用 Claude 作为后端时填写）
 CLAUDE_AI_SESSION_KEY=
@@ -22,6 +22,10 @@ CLAUDE_WEB_COOKIE=
 HTTP_PROXY=
 HTTPS_PROXY=
 NO_PROXY=localhost,127.0.0.1
+
+# Caddy
+ENABLE_CADDY=1 # 如果你有自己的https反向代理，那么注释掉这一行
+
 
 # ── Star Office UI ────────────────────────────────────────────────────────────
 STAR_OFFICE_PORT=18791
