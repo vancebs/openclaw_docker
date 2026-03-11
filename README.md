@@ -1,5 +1,5 @@
 # openclaw docker
-通过Docker部署openclaw。
+通过Docker部署openclaw。当前已适配**2026.3.8**版本。
 同时部署star-office-UI
 
 # 安装
@@ -39,5 +39,8 @@ openclaw devices approve <requestId>
 考虑到openclaw可能会自己安装一些应用。仅持久化.openclaw在更新容器后很有可能会导致无法正常运行。所以这里将整个/home/node映射到了volume openclaw_home。可以通过脚本```openclaw_home_path.sh```获取实际路径。
 
 # Tips
-- 2026.3.2开始调低了默认权限，可以通过修改"~/.openclaw/openclaw.json"中tools.profile的值为"full"获得最大权限。详见：https://docs.openclaw.ai/zh-CN/tools#%E5%B7%A5%E5%85%B7%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%EF%BC%88%E5%9F%BA%E7%A1%80%E5%85%81%E8%AE%B8%E5%88%97%E8%A1%A8%EF%BC%89
+- 2026.3.8上tools权限默认为coding，如果想要获得最大权限可以修改"~/.openclaw/openclaw.json"中tools.profile的值为"full"。详见：[Tools字段说明](https://docs.openclaw.ai/zh-CN/tools#%E5%B7%A5%E5%85%B7%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%EF%BC%88%E5%9F%BA%E7%A1%80%E5%85%81%E8%AE%B8%E5%88%97%E8%A1%A8%EF%BC%89)。也可以通过以下命令设置:
+```bash
+./exec.sh openclaw config set tools.profile 'full' --strict-json
+```
   
