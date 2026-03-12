@@ -35,7 +35,7 @@ NO_PROXY=localhost,127.0.0.1
 
 # ── Star Office UI ────────────────────────────────────────────────────────────
 #ENABLE_STAR_OFFICE=1
-STAR_OFFICE_PORT=18791
+STAR_OFFICE_PORT=19000
 STAR_OFFICE_DATA_VOLUME=star_office_data
 
 # REQUIRED in production: set strong random values

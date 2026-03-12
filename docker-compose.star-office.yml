@@ -31,7 +31,7 @@ services:
       # /home/node/.openclaw/workspace/memory for the 昨日小記 feature.
       - openclaw_home:/home/node:ro
     ports:
-      - "${STAR_OFFICE_PORT:-18791}:18791"
+      - "${STAR_OFFICE_PORT:-19000}:19000"
     restart: unless-stopped
     depends_on:
       - openclaw-gateway
