@@ -19,11 +19,18 @@ SCRIPT_DIR="$(dirname "$SCRIPT_PATH")"
 
 DOCKER_DIR="${SCRIPT_DIR}/docker"
 
+function enter_docker() {
+    pushd ${DOCKER_DIR} > /dev/null 2>&1
+}
+
+function leave_docker() {
+    popd > /dev/null 2>&1
+}
 
 ###############################################
 # docker compose auto-reads .env; source it here only to get the vars we
 # need for the manual `docker build` call below.
-pushd ${DOCKER_DIR} > /dev/null 2>&1
+enter_docker
 
 if [ -f .env ]; then
     set -a; source .env; set +a
@@ -41,8 +48,18 @@ if [ -f .env ]; then
     fi
 
     function docker_compose() {
+        CHDIR=0
+        if [ "$PWD" != "$DOCKER_DIR" ]; then
+            CHDIR=1
+            enter_docker
+	fi
+
         docker compose ${DOCKER_COMPOSE_FILES} $@
+
+        if [ $CHDIR -eq 1 ]; then
+            leave_docker
+        fi
     }
 fi
 
-popd > /dev/null 2>&1
+leave_docker
