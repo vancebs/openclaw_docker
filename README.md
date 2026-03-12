@@ -1,5 +1,5 @@
 # openclaw docker
-通过Docker部署openclaw。当前已适配**2026.3.8**版本。
+通过Docker部署openclaw。当前已适配**2026.3.11**版本。
 
 # 安装
 ## 下载
@@ -10,7 +10,7 @@ cd openclaw_docker
 
 ## 编辑配置文件
 ```bash
-cp ./env_sample ./.env
+cp ./docker/env_sample ./docker/.env
 ```
 复制后重点关注以下配置项：
 
