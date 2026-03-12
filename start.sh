@@ -2,11 +2,14 @@
 set -euo pipefail
 
 # ── .env bootstrap ────────────────────────────────────────────────────────────
-if [ ! -f .env ]; then
-    cp env_sample .env
+source utils.sh
+ENV_PATH="${DOCKER_DIR}/.env"
+ENV_SAMPLE_PATH="${DOCKER_DIR}/env_sample"
+if [ ! -f "${ENV_PATH}" ]; then
+    cp ${ENV_SAMPLE_PATH} ${ENV_PATH}
     echo ""
     echo "============================================================"
-    echo "  .env 文件已从 env_sample 复制。"
+    echo "  \"${ENV_PATH}\" 文件已创建。"
     echo "  请编辑 .env 填写必要配置（Token、Secret Key 等），"
     echo "  完成后回到此终端按 Enter 继续。"
     echo "============================================================"
@@ -17,6 +20,7 @@ fi
 
 # load env
 source utils.sh
+pushd ${DOCKER_DIR} > /dev/null 2>&1
 
 # check for install
 if [[ "${1:-}" == "--install" || "${1:-}" == "-i" ]]; then
@@ -75,3 +79,4 @@ fi
 echo "==> Starting services ..."
 docker_compose up -d
 
+popd > /dev/null 2>&1

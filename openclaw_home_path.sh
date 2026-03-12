@@ -1,7 +1,7 @@
 #! /bin/bash
 set -euo pipefail
 
-set -a; source .env; set +a
+source utils.sh
 
 VOLUME_NAME="${OPENCLAW_HOME_VOLUME:-openclaw_home}"
 

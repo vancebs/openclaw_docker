@@ -113,4 +113,4 @@ venv.bak/
 /port_trace
 /cache
 
-/caddy_conf
+/docker/caddy_conf
