@@ -1,8 +1,6 @@
 #! /bin/bash
 set -euo pipefail
 
-source utils.sh
-
 # ── .env bootstrap ────────────────────────────────────────────────────────────
 if [ ! -f .env ]; then
     cp env_sample .env
@@ -16,6 +14,9 @@ if [ ! -f .env ]; then
     read -rp "编辑完成后按 Enter 继续..." _
     echo ""
 fi
+
+# load env
+source utils.sh
 
 # check for install
 if [[ "${1:-}" == "--install" || "${1:-}" == "-i" ]]; then
@@ -57,9 +58,14 @@ if [[ "${1:-}" == "--install" || "${1:-}" == "-i" ]]; then
     echo "==> Configure allowedOrigins ..."
     URLS=""
     if [ "${OPENCLAW_GATEWAY_ALLOWED_IP:-}" != "" ]; then
-        URLS="$(printf ,\"https://%s\" ${OPENCLAW_GATEWAY_ALLOWED_IP})"
+        HTTPS_PORT=${OPENCLAW_GATEWAY_HTTPS_PORT:-443}
+	URLS="$(printf ,\"https://%s:${HTTPS_PORT}\" ${OPENCLAW_GATEWAY_ALLOWED_IP})"
+        if [ ${HTTPS_PORT} -eq 443 ]; then
+            # for 443, also allow urls without port
+            URLS="$URLS$(printf ,\"https://%s\" ${OPENCLAW_GATEWAY_ALLOWED_IP})"
+        fi
     fi
-    URLS="[\"http://127.0.0.1:${OPENCLAW_GATEWAY_PORT}\",\"http://localhost:${OPENCLAW_GATEWAY_PORT}\"${URLS}]"
+    URLS="[\"http://127.0.0.1:${OPENCLAW_GATEWAY_PORT:-18789}\",\"http://localhost:${OPENCLAW_GATEWAY_PORT:-18789}\"${URLS}]"
     docker_compose run --rm openclaw-gateway \
         node dist/index.js config set gateway.controlUi.allowedOrigins \
         "${URLS}" \

@@ -5,7 +5,9 @@
 set -a; source .env; set +a
 
 DOCKER_COMPOSE_FILES="-f docker-compose.yml"
-if [ ${ENABLE_CADDY:-0} -eq 1 ]; then
+
+# check caddy
+if [ ${ENABLE_CADDY:-0} -eq 1 ] && [ "${OPENCLAW_GATEWAY_ALLOWED_IP:-}" != "" ]; then
     DOCKER_COMPOSE_FILES="$DOCKER_COMPOSE_FILES -f docker-compose.caddy.yml"
 fi
 

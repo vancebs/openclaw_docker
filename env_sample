@@ -12,6 +12,7 @@ OPENCLAW_BRIDGE_PORT=18790
 OPENCLAW_GATEWAY_BIND=lan
 OPENCLAW_GATEWAY_TOKEN=claw
 #OPENCLAW_GATEWAY_ALLOWED_IP="192.168.3.200 192.168.10.200" # localhost和127.0.0.1以外需要访问控制后台的IP。配置后将以https://<ip>访问
+OPENCLAW_GATEWAY_HTTPS_PORT=443
 
 # Claude 集成（可选，仅使用 Claude 作为后端时填写）
 CLAUDE_AI_SESSION_KEY=
@@ -24,7 +25,12 @@ HTTPS_PROXY=
 NO_PROXY=localhost,127.0.0.1
 
 # Caddy
-ENABLE_CADDY=1 # 如果你有自己的https反向代理，那么注释掉这一行
+# 如果你没有自己的https反向代理，那么配置ENABLE_CADDY=1。
+# 注意：
+# 1. 这个配置项会读取OPENCLAW_GATEWAY_ALLOWED_IP和OPENCLAW_GATEWAY_HTTPS_PORT用于配置caddy服务。
+# 2. 如果OPENCLAW_GATEWAY_ALLOWED_IP未设置，caddy服务并不会实际启动
+# 3. 如果你自己配置https反向代理，请注意需要同OPENCLAW_GATEWAY_ALLOWED_IP和OPENCLAW_GATEWAY_HTTPS_PORT匹配
+#ENABLE_CADDY=1
 
 
 # ── Star Office UI ────────────────────────────────────────────────────────────

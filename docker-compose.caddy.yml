@@ -11,8 +11,8 @@ services:
     cap_add:
       - NET_ADMIN
     ports:
-      - "443:443"
-      - "443:443/udp"
+      - "${OPENCLAW_GATEWAY_HTTPS_PORT:-433}:443"
+      - "${OPENCLAW_GATEWAY_HTTPS_PORT:-433}:443/udp"
     volumes:
       - $PWD/caddy_conf:/etc/caddy
       - caddy_data:/data

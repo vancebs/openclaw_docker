@@ -20,7 +20,7 @@ cp ./env_sample ./.env
 |OPENCLAW_GATEWAY_ALLOWED_IP|当控制后台需要通过localhost/127.0.0.1以外的IP访问时，需要在此定义。多个IP以空格分隔|"192.168.3.50 172.16.120.20"|
 |HTTP_PROXY|如果你需要代理才能访问相关网络资源那么在这里配置你的代理|"http://127.0.0.1:7890"|
 |HTTPS_PROXY|如果你需要代理才能访问相关网络资源那么在这里配置你的代理|"http://127.0.0.1:7890"|
-|ENABLE_CADDY|如果你需要以localhost/127.0.0.1以外的IP访问控制后台。那么只能以https访问后台。如果你没有自己的https反向代理，可以配置开启caddy来自动部署https|1: 开启<br>非1: 不开启|
+|ENABLE_CADDY|通过localhost/127.0.0.1以外的IP访问控制后台，必须是https协议。如果你没有自己的https反向代理，可以配置开启caddy来自动部署https|1: 开启<br>非1: 不开启|
 
 ## 安装
 ```bash
