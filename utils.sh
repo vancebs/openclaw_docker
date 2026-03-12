@@ -11,6 +11,11 @@ if [ ${ENABLE_CADDY:-0} -eq 1 ] && [ "${OPENCLAW_GATEWAY_ALLOWED_IP:-}" != "" ];
     DOCKER_COMPOSE_FILES="$DOCKER_COMPOSE_FILES -f docker-compose.caddy.yml"
 fi
 
+# check star-office-UI
+if [ ${ENABLE_STAR_OFFICE:-0} -eq 1 ]; then
+    DOCKER_COMPOSE_FILES="$DOCKER_COMPOSE_FILES -f docker-compose.star-office.yml"
+fi
+
 function docker_compose() {
     docker compose ${DOCKER_COMPOSE_FILES} $@
 }

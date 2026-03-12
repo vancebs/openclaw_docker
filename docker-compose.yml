@@ -5,10 +5,6 @@ volumes:
   openclaw_home:
     name: ${OPENCLAW_HOME_VOLUME:-openclaw_home}
 
-  # Star Office UI persistent data (state.json, join-keys.json, runtime-config …)
-  star_office_data:
-    name: ${STAR_OFFICE_DATA_VOLUME:-star_office_data}
-
 services:
   openclaw-gateway:
     image: ${OPENCLAW_IMAGE:-openclaw:local}
@@ -65,43 +61,3 @@ services:
       retries: 5
       start_period: 20s
 
-
-  # ── Star Office UI ──────────────────────────────────────────────────────────
-  # Pixel-art AI agent status dashboard.
-  # Mounts star_office_data for runtime state persistence and openclaw_home
-  # read-only so the 昨日小記 feature can reach openclaw's workspace memory.
-  star-office-ui:
-    build:
-      context: star-office
-      dockerfile: Dockerfile
-      args:
-        HTTP_PROXY: ${HTTP_PROXY:-}
-        HTTPS_PROXY: ${HTTPS_PROXY:-}
-        NO_PROXY: ${NO_PROXY:-localhost,127.0.0.1}
-    environment:
-      FLASK_SECRET_KEY: ${FLASK_SECRET_KEY}
-      ASSET_DRAWER_PASS: ${ASSET_DRAWER_PASS}
-      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
-      GEMINI_MODEL: ${GEMINI_MODEL:-nanobanana-pro}
-      STAR_OFFICE_ENV: ${STAR_OFFICE_ENV:-production}
-      HTTP_PROXY: ${HTTP_PROXY:-}
-      HTTPS_PROXY: ${HTTPS_PROXY:-}
-      NO_PROXY: ${NO_PROXY:-localhost,127.0.0.1}
-    volumes:
-      - star_office_data:/data
-      # Read-only mount of openclaw home; entrypoint wires /memory ->
-      # /home/node/.openclaw/workspace/memory for the 昨日小記 feature.
-      - openclaw_home:/home/node:ro
-    ports:
-      - "${STAR_OFFICE_PORT:-18791}:18791"
-    restart: unless-stopped
-    depends_on:
-      - openclaw-gateway
-      #openclaw-gateway:
-      #  condition: service_healthy
-    healthcheck:
-      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:18791/health"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 15s

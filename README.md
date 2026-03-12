@@ -1,6 +1,5 @@
 # openclaw docker
 通过Docker部署openclaw。当前已适配**2026.3.8**版本。
-同时部署star-office-UI
 
 # 安装
 ## 下载
@@ -21,6 +20,7 @@ cp ./env_sample ./.env
 |HTTP_PROXY|如果你需要代理才能访问相关网络资源那么在这里配置你的代理|"http://127.0.0.1:7890"|
 |HTTPS_PROXY|如果你需要代理才能访问相关网络资源那么在这里配置你的代理|"http://127.0.0.1:7890"|
 |ENABLE_CADDY|通过localhost/127.0.0.1以外的IP访问控制后台，必须是https协议。如果你没有自己的https反向代理，可以配置开启caddy来自动部署https|1: 开启<br>非1: 不开启|
+|ENABLE_STAR_OFFICE|部署[star-office-UI](https://github.com/ringhyacinth/Star-Office-UI)。<br>注意：openclaw接入star-office-UI需要自己导入skill|1: 开启<br>非1: 不开启|
 
 ## 安装
 ```bash
