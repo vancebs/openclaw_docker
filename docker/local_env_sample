@@ -1,28 +1,22 @@
-# 镜像配置
-OPENCLAW_IMAGE=openclaw-hf:local
-#OPENCLAW_BASE_IMAGE=ghcr.io/openclaw/openclaw:latest
-OPENCLAW_BASE_IMAGE=ghcr.io/openclaw/openclaw:2026.3.13-1
-
-# Volume
-OPENCLAW_HOME_VOLUME=openclaw_home
+# 镜像配置 (WARNNING: 配置后将覆盖后续版本更新，你将需要自己维护openclaw版本!!)
+#OPENCLAW_BASE_IMAGE=ghcr.io/openclaw/openclaw:2026.3.13-1
 
 # 网关配置
-OPENCLAW_GATEWAY_PORT=18789
-OPENCLAW_BRIDGE_PORT=18790
-OPENCLAW_GATEWAY_BIND=lan
-OPENCLAW_GATEWAY_TOKEN=claw
-#OPENCLAW_GATEWAY_ALLOWED_IP="192.168.3.200 192.168.10.200" # localhost和127.0.0.1以外需要访问控制后台的IP。配置后将以https://<ip>访问
-OPENCLAW_GATEWAY_HTTPS_PORT=443
+#OPENCLAW_GATEWAY_PORT=18789
+#OPENCLAW_BRIDGE_PORT=18790
+#OPENCLAW_GATEWAY_TOKEN=claw
+#OPENCLAW_GATEWAY_ALLOWED_IP="192.168.3.100 192.168.10.100" # localhost和127.0.0.1以外需要访问控制后台的IP。配置后将以https://<ip>访问
+#OPENCLAW_GATEWAY_HTTPS_PORT=443
 
 # Claude 集成（可选，仅使用 Claude 作为后端时填写）
-CLAUDE_AI_SESSION_KEY=
-CLAUDE_WEB_SESSION_KEY=
-CLAUDE_WEB_COOKIE=
+#CLAUDE_AI_SESSION_KEY=
+#CLAUDE_WEB_SESSION_KEY=
+#CLAUDE_WEB_COOKIE=
 
 # Proxy
-HTTP_PROXY=
-HTTPS_PROXY=
-NO_PROXY=localhost,127.0.0.1
+#HTTP_PROXY=
+#HTTPS_PROXY=
+#NO_PROXY=localhost,127.0.0.1
 
 # ── Caddy ─────────────────────────────────────────────────────────────────────
 # 如果你没有自己的https反向代理，那么配置ENABLE_CADDY=1。
@@ -32,17 +26,16 @@ NO_PROXY=localhost,127.0.0.1
 # 3. 如果你自己配置https反向代理，请注意需要同OPENCLAW_GATEWAY_ALLOWED_IP和OPENCLAW_GATEWAY_HTTPS_PORT匹配
 #ENABLE_CADDY=1
 
-
 # ── Star Office UI ────────────────────────────────────────────────────────────
 #ENABLE_STAR_OFFICE=1
-STAR_OFFICE_PORT=19000
-STAR_OFFICE_DATA_VOLUME=star_office_data
+#STAR_OFFICE_PORT=19000
+#STAR_OFFICE_DATA_VOLUME=star_office_data
 
 # REQUIRED in production: set strong random values
-FLASK_SECRET_KEY=replace_with_password_longer_than_24 # length >= 24
-ASSET_DRAWER_PASS=replace_with_password_longer_than_8 # length >= 8
+#FLASK_SECRET_KEY=replace_with_password_longer_than_24 # length >= 24
+#ASSET_DRAWER_PASS=replace_with_password_longer_than_8 # length >= 8
 
 # Optional Gemini integration (AI background generation)
-GEMINI_API_KEY=
-GEMINI_MODEL=nanobanana-pro
-STAR_OFFICE_ENV=production
+#GEMINI_API_KEY=
+#GEMINI_MODEL=nanobanana-pro
+#STAR_OFFICE_ENV=production

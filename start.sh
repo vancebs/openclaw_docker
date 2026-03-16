@@ -3,14 +3,14 @@ set -euo pipefail
 
 # ── .env bootstrap ────────────────────────────────────────────────────────────
 source utils.sh
-ENV_PATH="${DOCKER_DIR}/.env"
-ENV_SAMPLE_PATH="${DOCKER_DIR}/env_sample"
+ENV_PATH="${SCRIPT_DIR}/local_env"
+ENV_SAMPLE_PATH="${DOCKER_DIR}/local_env_sample"
 if [ ! -f "${ENV_PATH}" ]; then
     cp ${ENV_SAMPLE_PATH} ${ENV_PATH}
     echo ""
     echo "============================================================"
     echo "  \"${ENV_PATH}\" 文件已创建。"
-    echo "  请编辑 .env 填写必要配置（Token、Secret Key 等），"
+    echo "  请编辑 local_env 填写必要配置（Token、Proxy 等），"
     echo "  完成后回到此终端按 Enter 继续。"
     echo "============================================================"
     echo ""

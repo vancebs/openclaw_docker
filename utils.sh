@@ -28,12 +28,12 @@ function leave_docker() {
 }
 
 ###############################################
-# docker compose auto-reads .env; source it here only to get the vars we
-# need for the manual `docker build` call below.
-enter_docker
+# docker_compose
 
-if [ -f .env ]; then
-    set -a; source .env; set +a
+if [ -f "local_env" ]; then
+    enter_docker
+
+    set -a; source ./env; source ../local_env; set +a
 
     DOCKER_COMPOSE_FILES="-f docker-compose.yml"
 
@@ -47,19 +47,21 @@ if [ -f .env ]; then
         DOCKER_COMPOSE_FILES="$DOCKER_COMPOSE_FILES -f docker-compose.star-office.yml"
     fi
 
+    DOCKER_COMPOSE_ENV="--env-file ./env --env-file ../local_env"
+
     function docker_compose() {
         CHDIR=0
         if [ "$PWD" != "$DOCKER_DIR" ]; then
             CHDIR=1
             enter_docker
-	fi
+        fi
 
-        docker compose ${DOCKER_COMPOSE_FILES} $@
+        docker compose ${DOCKER_COMPOSE_FILES} ${DOCKER_COMPOSE_ENV} $@
 
         if [ $CHDIR -eq 1 ]; then
             leave_docker
         fi
     }
-fi
 
-leave_docker
+    leave_docker
+fi
