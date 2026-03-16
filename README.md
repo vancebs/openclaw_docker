@@ -10,7 +10,7 @@ cd openclaw_docker
 
 ## 编辑配置文件
 ```bash
-cp ./docker/env_sample ./docker/.env
+cp ./docker/local_env_sample ./local_env
 ```
 复制后重点关注以下配置项：
 
@@ -19,6 +19,7 @@ cp ./docker/env_sample ./docker/.env
 |OPENCLAW_GATEWAY_ALLOWED_IP|当控制后台需要通过localhost/127.0.0.1以外的IP访问时，需要在此定义。多个IP以空格分隔|"192.168.3.50 172.16.120.20"|
 |HTTP_PROXY|如果你需要代理才能访问相关网络资源那么在这里配置你的代理|"http://127.0.0.1:7890"|
 |HTTPS_PROXY|如果你需要代理才能访问相关网络资源那么在这里配置你的代理|"http://127.0.0.1:7890"|
+|NO_PROXY|开启代理的情况下同步配置这个|127.0.0.1,localhost|
 |ENABLE_CADDY|通过localhost/127.0.0.1以外的IP访问控制后台，必须是https协议。如果你没有自己的https反向代理，可以配置开启caddy来自动部署https|1: 开启<br>非1: 不开启|
 |ENABLE_STAR_OFFICE|部署[star-office-UI](https://github.com/ringhyacinth/Star-Office-UI)。<br>注意：openclaw接入star-office-UI需要自己导入skill|1: 开启<br>非1: 不开启|
 
