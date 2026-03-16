@@ -56,7 +56,7 @@ if [ -f "local_env" ]; then
             enter_docker
         fi
 
-        docker compose ${DOCKER_COMPOSE_FILES} ${DOCKER_COMPOSE_ENV} $@
+        docker compose --project-name openclaw_docker ${DOCKER_COMPOSE_FILES} ${DOCKER_COMPOSE_ENV} $@
 
         if [ $CHDIR -eq 1 ]; then
             leave_docker
