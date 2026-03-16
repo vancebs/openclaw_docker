@@ -55,9 +55,9 @@ if [[ "${1:-}" == "--install" || "${1:-}" == "-i" ]]; then
     docker_compose run --rm openclaw-gateway \
         node dist/index.js config set gateway.mode local
 
-    #echo "==> Configure bind ..." # already configured by OPENCLAW_GATEWAY_BIND within .env
-    #docker_compose run --rm openclaw-gateway \
-    #    node dist/index.js config set gateway.bind lan
+    echo "==> Configure bind ..." # already configured by OPENCLAW_GATEWAY_BIND within .env
+    docker_compose run --rm openclaw-gateway \
+        node dist/index.js config set gateway.bind ${OPENCLAW_GATEWAY_BIND}
 
     echo "==> Configure allowedOrigins ..."
     URLS=""
