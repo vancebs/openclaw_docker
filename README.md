@@ -1,5 +1,5 @@
 # openclaw docker
-通过Docker部署openclaw。当前已适配**2026.3.11**版本。
+通过Docker部署openclaw。当前已适配**2026.3.13-1**版本。
 
 # 安装
 ## 下载
