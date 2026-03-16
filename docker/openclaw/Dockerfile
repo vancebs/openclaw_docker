@@ -38,7 +38,6 @@ USER root
 
 # 1. Playwright system deps + Homebrew prerequisites (gcc, make, etc.)
 RUN apt-get update \
- && node /app/node_modules/playwright-core/cli.js install-deps chromium \
  && apt-get install -y --no-install-recommends \
         build-essential \
         procps \
