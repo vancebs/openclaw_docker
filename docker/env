@@ -32,6 +32,11 @@ OPENCLAW_GATEWAY_HTTPS_PORT=443
 # 3. 如果你自己配置https反向代理，请注意需要同OPENCLAW_GATEWAY_ALLOWED_IP和OPENCLAW_GATEWAY_HTTPS_PORT匹配
 #ENABLE_CADDY=1
 
+# ── Feishu ────────────────────────────────────────────────────────────────────
+#CONFIG_FEISHU=1
+#FEISHU_APP_ID=
+#FEISHU_APP_SECRET=
+#FEISHU_ALLOW_FROM=
 
 # ── Star Office UI ────────────────────────────────────────────────────────────
 #ENABLE_STAR_OFFICE=1

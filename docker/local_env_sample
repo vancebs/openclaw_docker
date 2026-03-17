@@ -26,6 +26,17 @@
 # 3. 如果你自己配置https反向代理，请注意需要同OPENCLAW_GATEWAY_ALLOWED_IP和OPENCLAW_GATEWAY_HTTPS_PORT匹配
 #ENABLE_CADDY=1
 
+# ── Feishu ────────────────────────────────────────────────────────────────────
+# 注意：
+#     启用了这里的配置之后，onboard中需要跳过channel配置。
+#CONFIG_FEISHU=1
+#FEISHU_APP_ID=
+#FEISHU_APP_SECRET=
+
+# 不知道这个ID，可以先不配。等发送消息后去log中找类似下面的log。sender后面就是。
+#   - 如: feishu[default]: sender ou_xxxxxxxxxxx not in DM allowlist
+#FEISHU_ALLOW_FROM=
+
 # ── Star Office UI ────────────────────────────────────────────────────────────
 #ENABLE_STAR_OFFICE=1
 #STAR_OFFICE_PORT=19000

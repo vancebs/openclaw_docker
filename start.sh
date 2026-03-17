@@ -74,6 +74,37 @@ if [[ "${1:-}" == "--install" || "${1:-}" == "-i" ]]; then
         node dist/index.js config set gateway.controlUi.allowedOrigins \
         "${URLS}" \
         --strict-json
+
+    if [ ${CONFIG_FEISHU} -eq 1 ]; then
+        if [ -n "${FEISHU_APP_ID:-}" ] && [ -n "${FEISHU_APP_SECRET:-}" ]; then
+            echo "==> Configure Feishu with app_id & app_secret & allow_from ..."
+            FEISHU_CHANNEL_JSON="$(json_object \
+                $(json_field_common "enabled" true) \
+                $(json_field_string "appId" "${FEISHU_APP_ID:-}") \
+                $(json_field_string "appSecret" "${FEISHU_APP_SECRET:-}") \
+                $(json_field_string "domain" "feishu") \
+                $(json_field_string "connectionMode" "websocket") \
+                $(json_field_common "requireMention" true) \
+                $(json_field_string "dmPolicy" "allowlist") \
+                $(json_field_array_string_no_empty "allowFrom" "${FEISHU_ALLOW_FROM:-}") \
+                $(json_field_string "groupPolicy" "open") \
+                $(json_field_array_common "groupAllowFrom") \
+                $(json_field_common "streaming" true) \
+                $(json_field_common "threadSession" true) \
+	        $(json_field_common "footer" $(json_object \
+                    $(json_field_common "elapsed" true) \
+                    $(json_field_common "status" true) \
+                )) \
+            )"
+            docker_compose run --rm openclaw-gateway \
+                node dist/index.js config set channels.feishu "${FEISHU_CHANNEL_JSON}"  --strict-json
+        fi
+
+        echo "==> Installing Feishu ..."
+        docker_compose run --rm openclaw-gateway \
+            pnpx @larksuite/openclaw-lark-tools install
+    fi
+
 fi
 
 echo "==> Starting services ..."
