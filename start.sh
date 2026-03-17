@@ -104,7 +104,12 @@ if [[ "${1:-}" == "--install" || "${1:-}" == "-i" ]]; then
         docker_compose run --rm openclaw-gateway \
             pnpx @larksuite/openclaw-lark-tools install
     fi
+elif [[ "${1:-}" == "--update" || "${1:-}" == "-u" ]]; then
+    echo "==> Shuting down ..."
+    docker_compose down
 
+    echo "==> Building images ..."
+    docker_compose build --pull
 fi
 
 echo "==> Starting services ..."
