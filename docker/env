@@ -1,7 +1,7 @@
 # 镜像配置
 OPENCLAW_IMAGE=openclaw-hf:local
 #OPENCLAW_BASE_IMAGE=ghcr.io/openclaw/openclaw:latest
-OPENCLAW_BASE_IMAGE=ghcr.io/openclaw/openclaw:2026.3.13-1
+OPENCLAW_BASE_IMAGE=ghcr.io/openclaw/openclaw:2026.3.23-2
 
 # Volume
 OPENCLAW_HOME_VOLUME=openclaw_home
