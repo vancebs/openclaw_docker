@@ -102,7 +102,7 @@ if [[ "${1:-}" == "--install" || "${1:-}" == "-i" ]]; then
 
         echo "==> Installing Feishu ..."
         docker_compose run --rm openclaw-gateway \
-            pnpx @larksuite/openclaw-lark-tools install
+            pnpx @larksuite/openclaw-lark install
     fi
 elif [[ "${1:-}" == "--update" || "${1:-}" == "-u" ]]; then
     echo "==> Shuting down ..."
