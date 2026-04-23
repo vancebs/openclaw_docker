@@ -42,11 +42,6 @@ if [ -f "local_env" ]; then
         DOCKER_COMPOSE_FILES="$DOCKER_COMPOSE_FILES -f docker-compose.caddy.yml"
     fi
 
-    # check star-office-UI
-    if [ ${ENABLE_STAR_OFFICE:-0} -eq 1 ]; then
-        DOCKER_COMPOSE_FILES="$DOCKER_COMPOSE_FILES -f docker-compose.star-office.yml"
-    fi
-
     DOCKER_COMPOSE_ENV="--env-file ./env --env-file ../local_env"
 
     function docker_compose() {
