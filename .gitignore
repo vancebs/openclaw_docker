@@ -114,5 +114,4 @@ venv.bak/
 /cache
 
 /docker/caddy_conf
-/docker/env
 /local_env
