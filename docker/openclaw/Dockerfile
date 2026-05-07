@@ -46,6 +46,8 @@ RUN apt-get update \
         curl \
         vim \
         netcat-openbsd \
+        iputils \
+        dnsutils \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
 RUN mkdir -p /home/linuxbrew \
