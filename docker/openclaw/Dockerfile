@@ -46,7 +46,7 @@ RUN apt-get update \
         curl \
         vim \
         netcat-openbsd \
-        iputils \
+        iputils-ping \
         dnsutils \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
