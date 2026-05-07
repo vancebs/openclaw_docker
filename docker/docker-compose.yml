@@ -7,12 +7,12 @@ volumes:
 
 services:
   openclaw-gateway:
-    image: ${OPENCLAW_IMAGE:-openclaw:local}
+    image: ${OPENCLAW_DOCKER_REGISTRY:-}${OPENCLAW_IMAGE:-openclaw}:${OPENCLAW_IMG_VERSION:-latest}
     build:
       context: openclaw
       dockerfile: Dockerfile
       args:
-        OPENCLAW_BASE_IMAGE: ${OPENCLAW_BASE_IMAGE:-ghcr.io/openclaw/openclaw:latest}
+        OPENCLAW_BASE_IMAGE: ${OPENCLAW_BASE_IMAGE:-ghcr.io/openclaw/openclaw}:${OPENCLAW_IMG_VERSION:-latest}
         HTTP_PROXY: ${HTTP_PROXY:-}
         HTTPS_PROXY: ${HTTPS_PROXY:-}
         NO_PROXY: ${NO_PROXY:-localhost,127.0.0.1}

@@ -44,8 +44,8 @@ if [[ "${1:-}" == "--install" || "${1:-}" == "-i" ]]; then
         fi
     fi
 
-    echo "==> Building images ..."
-    docker_compose build --pull
+    #echo "==> Building images ..."
+    #docker_compose build --pull
 
     echo "==> onboard ..."
     docker_compose run --rm openclaw-gateway \

@@ -1,5 +1,5 @@
 # 镜像配置 (WARNNING: 配置后将覆盖后续版本更新，你将需要自己维护openclaw版本!!)
-#OPENCLAW_BASE_IMAGE=ghcr.io/openclaw/openclaw:2026.3.13-1
+#OPENCLAW_IMG_VERSION=2026.5.5
 
 # 网关配置
 #OPENCLAW_GATEWAY_PORT=18789

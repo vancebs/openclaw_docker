@@ -1,7 +1,8 @@
 # 镜像配置
-OPENCLAW_IMAGE=openclaw-hf:local
-OPENCLAW_BASE_IMAGE=ghcr.io/openclaw/openclaw:latest
-#OPENCLAW_BASE_IMAGE=ghcr.io/openclaw/openclaw:2026.4.26
+OPENCLAW_IMG_VERSION=latest #2026.5.5
+OPENCLAW_IMAGE=openclaw-hf
+OPENCLAW_BASE_IMAGE=ghcr.io/openclaw/openclaw
+OPENCLAW_DOCKER_REGISTRY="harbor.t2mobile.com/library/" # must end with /
 
 # Volume
 OPENCLAW_HOME_VOLUME=openclaw_home
