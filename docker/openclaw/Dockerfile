@@ -20,8 +20,9 @@
 #     docker compose build --pull      # re-pulls ghcr.io/openclaw/openclaw:latest
 #     docker compose up -d             # recreate containers with fresh image layer
 
-ARG OPENCLAW_BASE_IMAGE=ghcr.io/openclaw/openclaw:latest
-FROM ${OPENCLAW_BASE_IMAGE}
+ARG OPENCLAW_BASE_IMAGE=ghcr.io/openclaw/openclaw
+ARG OPENCLAW_IMG_VERSION=latest
+FROM ${OPENCLAW_BASE_IMAGE}:${OPENCLAW_IMG_VERSION}
 
 # setup proxy
 ARG HTTP_PROXY

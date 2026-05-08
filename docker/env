@@ -2,7 +2,7 @@
 OPENCLAW_IMG_VERSION=2026.5.6 # latest
 OPENCLAW_IMAGE=openclaw-hf
 OPENCLAW_BASE_IMAGE=ghcr.io/openclaw/openclaw
-OPENCLAW_DOCKER_REGISTRY="harbor.t2mobile.com/library/" # must end with /
+OPENCLAW_DOCKER_REGISTRY="harbor.t2mobile.com/library"
 
 # Volume
 OPENCLAW_HOME_VOLUME=openclaw_home
