@@ -1,0 +1,6 @@
+services:
+  openclaw-gateway:
+    dns:
+        - ${OPENCLAW_GATEWAY_DNS1}
+        - ${OPENCLAW_GATEWAY_DNS2}
+

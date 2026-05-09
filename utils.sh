@@ -37,6 +37,11 @@ if [ -f "local_env" ]; then
 
     DOCKER_COMPOSE_FILES="-f docker-compose.yml"
 
+    # check dns override
+    if [ ${OPENCLAW_GATEWAY_DNS_OVERRIDE:-0} -eq 1 ]; then
+        DOCKER_COMPOSE_FILES="$DOCKER_COMPOSE_FILES -f docker-compose.dns.yml"
+    fi
+
     # check caddy
     if [ ${ENABLE_CADDY:-0} -eq 1 ] && [ "${OPENCLAW_GATEWAY_ALLOWED_IP:-}" != "" ]; then
         DOCKER_COMPOSE_FILES="$DOCKER_COMPOSE_FILES -f docker-compose.caddy.yml"
