@@ -37,7 +37,11 @@ ENV PLAYWRIGHT_BROWSERS_PATH=/home/node/.cache/ms-playwright
 
 USER root
 
-# 1. Playwright system deps + Homebrew prerequisites (gcc, make, etc.)
+# 1. import ca
+COPY ca/* /usr/local/share/ca-certificates/
+RUN update-ca-certificates
+
+# 2. system deps (gcc, make, etc.)
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
         build-essential \
