@@ -1,5 +1,5 @@
 # 镜像配置
-OPENCLAW_IMG_VERSION=2026.5.7 # latest
+OPENCLAW_IMG_VERSION=2026.5.12 # latest
 OPENCLAW_IMAGE=openclaw-hf
 OPENCLAW_BASE_IMAGE=ghcr.io/openclaw/openclaw
 OPENCLAW_DOCKER_REGISTRY="harbor.t2mobile.com/library"
