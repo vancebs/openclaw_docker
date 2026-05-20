@@ -29,6 +29,9 @@ OPENCLAW_GATEWAY_DNS2="1.1.1.1"
 #HTTPS_PROXY=
 #NO_PROXY=localhost,127.0.0.1
 
+# knowledge base
+KNOWLEDGE_BASE_DIR="/home/node/.openclaw/knowledge-base"
+
 # ── Caddy ─────────────────────────────────────────────────────────────────────
 # 如果你没有自己的https反向代理，那么配置ENABLE_CADDY=1。
 # 注意：
