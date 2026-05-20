@@ -53,6 +53,7 @@ RUN apt-get update \
         netcat-openbsd \
         iputils-ping \
         dnsutils \
+        openssh-client \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
 RUN mkdir -p /home/linuxbrew \
