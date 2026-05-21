@@ -173,6 +173,12 @@ if [ $PARAM_INSTALL -eq 1 ]; then
         node dist/index.js config set gateway.controlUi.allowedOrigins \
         "${URLS}" \
         --strict-json
+
+    echo "==> Configure memorySearch extraPaths ..."
+    docker_compose run --rm openclaw-gateway \
+        node dist/index.js config set agents.defaults.memorySearch.extraPaths \
+        "[\"\${KNOWLEDGE_BASE_DIR}\"]" \
+        --strict-json
 elif [ $PARAM_UPDATE -eq 1 ]; then
     echo "==> Shuting down ..."
     docker_compose down
