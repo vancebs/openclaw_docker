@@ -295,29 +295,27 @@ class OpenClawClient:
         done_event = asyncio.Event()
         run_id: str | None = None
 
-        # Track the latest cumulative text snapshot for delta computation
-        _last_text: list[str] = [""]
-
         async def on_event(msg: dict):
             nonlocal run_id
             event = msg.get("event", "")
             payload = msg.get("payload") or {}
 
             if event == "agent":
+                # Filter strictly: only process events for our session and run.
+                # The gateway provides both sessionKey and runId on every agent event.
+                if payload.get("sessionKey") != session_key:
+                    return
+                if run_id is not None and payload.get("runId") != run_id:
+                    return
+
                 stream = payload.get("stream")
                 data = payload.get("data") or {}
 
                 if stream == "assistant":
-                    # The gateway sends cumulative text snapshots, not deltas.
-                    # Compute the new portion to avoid duplicating output.
-                    current_text = data.get("text") or ""
-                    prev = _last_text[0]
-                    delta = (
-                        current_text[len(prev):]
-                        if current_text.startswith(prev)
-                        else current_text
-                    )
-                    _last_text[0] = current_text
+                    # Use the gateway-provided `delta` field (incremental text).
+                    # Falling back to `text` (full snapshot) only if `delta` is absent
+                    # (for forward-compatibility with older gateway versions).
+                    delta = data.get("delta") or data.get("text") or ""
                     if delta:
                         full_response.append(delta)
                         if on_chunk:
