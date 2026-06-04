@@ -85,11 +85,21 @@ def load_or_create_identity(identity_file: str | None) -> dict:
     if identity_file:
         p = Path(identity_file)
         if p.exists():
-            data = json.loads(p.read_text())
+            try:
+                data = json.loads(p.read_text())
+            except (json.JSONDecodeError, ValueError) as e:
+                raise RuntimeError(
+                    f"Identity file '{identity_file}' is not valid JSON: {e}"
+                ) from e
             return data
         identity = generate_identity()
-        p.parent.mkdir(parents=True, exist_ok=True)
-        p.write_text(json.dumps(identity, indent=2))
+        try:
+            p.parent.mkdir(parents=True, exist_ok=True)
+            p.write_text(json.dumps(identity, indent=2))
+        except OSError as e:
+            raise RuntimeError(
+                f"Cannot write identity file '{identity_file}': {e}"
+            ) from e
         return identity
     return generate_identity()
 
@@ -155,7 +165,18 @@ class OpenClawClient:
         if params is not None:
             msg["params"] = params
         await self._send(msg)
-        return await asyncio.wait_for(future, timeout=self.timeout)
+        try:
+            return await asyncio.wait_for(future, timeout=self.timeout)
+        except TimeoutError:
+            self._pending.pop(req_id, None)
+            raise TimeoutError(
+                f"Gateway did not respond to '{method}' within {self.timeout:.0f}s"
+            )
+        except asyncio.CancelledError:
+            self._pending.pop(req_id, None)
+            raise RuntimeError(
+                f"Request '{method}' was cancelled (connection lost)"
+            ) from None
 
     async def _dispatch(self, on_event):
         """Dispatch incoming messages – runs until the connection closes."""
@@ -176,10 +197,12 @@ class OpenClawClient:
                 elif mtype == "event":
                     await on_event(msg)
         except Exception:
-            # Cancel all pending requests on connection loss
+            # Cancel all pending requests, then re-raise so the caller knows
+            # the connection is gone (do NOT swallow the exception here).
             for fut in self._pending.values():
                 if not fut.done():
                     fut.cancel()
+            raise
 
     # ── Connection & authentication ───────────────────────────────────────────
 
@@ -188,9 +211,10 @@ class OpenClawClient:
         # 1. Receive connect.challenge
         raw = await asyncio.wait_for(ws.recv(), timeout=10)
         challenge = json.loads(raw)
-        assert challenge.get("event") == "connect.challenge", (
-            f"Unexpected first message: {challenge}"
-        )
+        if challenge.get("event") != "connect.challenge":
+            raise RuntimeError(
+                f"Unexpected first message from gateway: {challenge}"
+            )
         nonce = challenge["payload"]["nonce"]
 
         # 2. Build Ed25519 device identity and sign the connect payload
@@ -294,6 +318,8 @@ class OpenClawClient:
         session_key: str | None = None
         done_event = asyncio.Event()
         run_id: str | None = None
+        run_status: list[str | None] = [None]        # set by sessions.changed
+        conn_error: list[BaseException | None] = [None]  # set if dispatch loop dies
 
         async def on_event(msg: dict):
             nonlocal run_id
@@ -326,12 +352,23 @@ class OpenClawClient:
                         done_event.set()
 
             elif event == "sessions.changed":
-                # Fallback: gateway may signal completion here
                 if payload.get("sessionKey") == session_key:
                     run = payload.get("run") or {}
                     status = run.get("status")
                     if status in ("done", "error", "cancelled", "timeout"):
+                        run_status[0] = status
                         done_event.set()
+
+        async def _dispatch_guarded():
+            """Run _dispatch and capture any exception; always unblock done_event."""
+            try:
+                await self._dispatch(on_event)
+            except Exception as e:
+                conn_error[0] = e
+            finally:
+                # Unblock done_event.wait() so run() doesn't hang if the
+                # connection drops before the agent run completes.
+                done_event.set()
 
         async with websockets.connect(
             self.url,
@@ -345,7 +382,7 @@ class OpenClawClient:
             await self._connect(ws)
 
             # Start background dispatcher
-            dispatch_task = asyncio.create_task(self._dispatch(on_event))
+            dispatch_task = asyncio.create_task(_dispatch_guarded())
 
             try:
                 # Subscribe to session events (required to receive sessions.changed)
@@ -372,13 +409,34 @@ class OpenClawClient:
                 run_id = send_resp.get("runId")
 
                 # Wait for the run to complete
-                await asyncio.wait_for(done_event.wait(), timeout=self.timeout)
+                try:
+                    await asyncio.wait_for(done_event.wait(), timeout=self.timeout)
+                except TimeoutError:
+                    raise TimeoutError(
+                        f"Agent '{self.agent}' did not complete within "
+                        f"{self.timeout:.0f}s "
+                        f"(session: {session_key}, runId: {run_id})"
+                    )
+
+                # Check if the dispatch loop died (e.g. connection dropped mid-run)
+                if conn_error[0] is not None:
+                    raise RuntimeError(
+                        f"WebSocket connection lost during agent run: {conn_error[0]}"
+                    ) from conn_error[0]
+
+                # Check if the agent run ended in a non-success state
+                status = run_status[0]
+                if status is not None and status != "done":
+                    raise RuntimeError(
+                        f"Agent run ended with status '{status}' "
+                        f"(session: {session_key}, runId: {run_id})"
+                    )
 
             finally:
                 dispatch_task.cancel()
                 try:
                     await dispatch_task
-                except asyncio.CancelledError:
+                except (asyncio.CancelledError, Exception):
                     pass
 
         result = "".join(full_response)
@@ -534,8 +592,17 @@ def main():
     except KeyboardInterrupt:
         print("\nInterrupted.", file=sys.stderr)
         sys.exit(130)
+    except SystemExit:
+        raise
     except Exception as e:
-        print(f"\nERROR: {e}", file=sys.stderr)
+        # str(e) can be empty for some built-in exceptions (e.g. bare TimeoutError)
+        msg = str(e) or type(e).__name__
+        print(f"\nERROR: {msg}", file=sys.stderr)
+        sys.exit(1)
+    except BaseException as e:
+        # Safety net for CancelledError and other BaseException subclasses
+        # that are not caught by `except Exception` in Python 3.8+.
+        print(f"\nERROR: {type(e).__name__}: {e}", file=sys.stderr)
         sys.exit(1)
 
 
