@@ -73,6 +73,10 @@ RUN mkdir -p /home/linuxbrew \
 USER node
 WORKDIR /home/node
 
+# install uv
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# install brew
 ENV HOMEBREW_PREFIX=/home/linuxbrew/.linuxbrew
 ENV HOMEBREW_CELLAR=${HOMEBREW_PREFIX}/Cellar
 ENV HOMEBREW_REPOSITORY=${HOMEBREW_PREFIX}
